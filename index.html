@@ -1,38 +1,504 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Red Permanente Descentralizada 🌐</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💌 Para ti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f0e6f6;
+      min-height: 100vh;
+      font-family: "Dancing Script", cursive;
+    }
+
+    .envlope-wrapper {
+      height: 1400px;
+      position: relative;
+      perspective: 1500px;
+    }
+
+    #envelope {
+      position: relative;
+      width: 280px;
+      height: 180px;
+      margin-left: auto;
+      margin-right: auto;
+      top: 220px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      -webkit-user-select: none;
+      user-select: none;
+      perspective: 1000px;
+    }
+
+    #envelope:hover {
+      transform: translateY(-5px);
+    }
+
+    /* === SOBRE === */
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-left: 140px solid transparent;
+      border-right: 140px solid transparent;
+      border-bottom: 82px solid transparent;
+      border-top: 98px solid #d9534f;
+      transform-origin: top center;
+      transition: transform 0.5s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      border-left: 140px solid #f5a3a2;
+      border-right: 140px solid #f5a3a2;
+      border-bottom: 90px solid #ff6f61;
+      border-top: 90px solid transparent;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    /* === CARTA === */
+    .letter {
+      position: absolute;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      z-index: 7;
+      transition: transform 0.6s ease, z-index 0s;
+    }
+
+    /* ✅ Este es el pliegue de referencia — MIDE SU ALTURA */
+    .letter-base {
+      background-color: #ffffff;
+      border-radius: 6px 6px 0 0;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+      padding: 15px 15px 18px;
+      color: #4a3828;
+      line-height: 1.6;
+      font-size: 1.05rem;
+      text-align: center;
+      position: relative;
+      z-index: 20;
+      min-height: 145px; /* ✅ Altura de referencia — AJUSTA SI NECESITAS */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* === CONTENEDOR DE VIDEO === */
+    .video-container {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #f5f5f5;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 2px solid #e8e0dc;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* === LÍNEA DE DOBLEZ === */
+    .fold-line {
+      border-top: 1px dashed #ddd;
+      width: 85%;
+      margin: 0 auto;
+      position: relative;
+      z-index: 21;
+      background: #fff;
+      height: 1px;
+      /* ✅ Oculta la línea cuando la carta está CERRADA */
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    /* ✅ Muestra las líneas SOLO cuando está ABIERTA */
+    .open .fold-line {
+      opacity: 1;
+    }
+
+    /* === PLEIGUE === */
+    .fold {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      transform: rotateX(-90deg);
+      transition: transform 0.8s ease-in-out, opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+      backface-visibility: hidden;
+    }
+
+    .fold-content {
+      background: #fff;
+      padding: 15px 18px;
+      color: #4a3828;
+      line-height: 1.6;
+      font-size: 1.05rem;
+      text-align: center;
+      
+      /* ✅ TODOS LOS PLIEGUES MISMA ALTURA QUE EL ENCABEZADO */
+      min-height: 145px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .open .fold {
+      transform: rotateX(0deg);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* === REPRODUCTOR ABAJO === */
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 14px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-img {
+      width: 45px;
+      height: 45px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .media-title {
+      font-size: 0.8rem;
+      color: #5c4033;
+      max-width: 110px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .play-btn {
+      background: linear-gradient(145deg, #e8d5c4, #d4b9a6);
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      font-size: 15px;
+      color: #5c4033;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.08);
+    }
+
+    /* === CORAZONES === */
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: 0;
+      right: 10%;
+      pointer-events: none;
+    }
+
+    .heart:before,
+    .heart:after {
+      position: absolute;
+      content: "";
+      left: 50px;
+      top: 0;
+      width: 50px;
+      height: 80px;
+      background: #e60073;
+      border-radius: 50px 50px 0 0;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+      pointer-events: none;
+    }
+
+    .heart:after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    /* === CERRADO === */
+    .close .flap { transform: rotateX(0deg); }
+    .close .letter {
+      transform: translateX(-50%) translateY(0);
+      z-index: 7;
+    }
+    .close .heart {
+      opacity: 0;
+      animation: none;
+    }
+
+    /* === ABIERTO === */
+    .open .flap { transform: rotateX(180deg); }
+    .open .letter {
+      transform: translateX(-50%) translateY(-170px);
+      z-index: 15;
+      transition: transform 0.6s ease, z-index 0s;
+    }
+
+    /* Animación corazones */
+    .a1 {
+      left: 20%;
+      transform: scale(0.6);
+      opacity: 1;
+      animation: slideUp 4s linear 1, sideSway 2s ease-in-out 4 alternate;
+      animation-fill-mode: forwards;
+      animation-delay: 0.7s;
+    }
+    .a2 {
+      left: 55%;
+      transform: scale(1);
+      opacity: 1;
+      animation: slideUp 5s linear 1, sideSway 4s ease-in-out 2 alternate;
+      animation-fill-mode: forwards;
+      animation-delay: 0.7s;
+    }
+    .a3 {
+      left: 10%;
+      transform: scale(0.8);
+      opacity: 1;
+      animation: slideUp 7s linear 1, sideSway 2s ease-in-out 6 alternate;
+      animation-fill-mode: forwards;
+      animation-delay: 0.7s;
+    }
+
+    @keyframes slideUp {
+      0% { top: 0; }
+      100% { top: -600px; }
+    }
+
+    @keyframes sideSway {
+      0% { margin-left: 0px; }
+      100% { margin-left: 50px; }
+    }
+
+    .instruccion {
+      text-align: center;
+      margin-top: 20px;
+      color: #8b4513;
+      font-size: 16px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    @media (max-width: 360px) {
+      #envelope { width: 260px; }
+      .flap, .pocket { border-left-width: 130px; border-right-width: 130px; }
+      .open .letter { transform: translateX(-50%) translateY(-160px); }
+      .music-player { left: 10px; bottom: 15px; padding: 8px 12px; }
+      .custom-img { width: 40px; height: 40px; }
+      .media-title { max-width: 90px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="contenedor">
-    <header>
-      <h1>🌍 Red Sin Centro — Permanente</h1>
-      <p id="estado">🔄 Conectando...</p>
-      <p id="mi-id" class="id"></p>
-    </header>
 
-    <section class="identidad">
-      <label>Tu nombre: <input type="text" id="nombre-usuario" placeholder="Escribe tu nombre"></label>
-    </section>
-
-    <section class="publicar">
-      <textarea id="texto-publicacion" placeholder="¿Qué compartes? Se guardará permanentemente..."></textarea>
-      <button id="btn-publicar">📤 Publicar a la red</button>
-    </section>
-
-    <section class="publicaciones">
-      <h2>📢 Publicaciones</h2>
-      <button id="btn-recargar">🔄 Buscar novedades</button>
-      <div id="lista-publicaciones"></div>
-    </section>
+  <div class="music-player">
+    <img class="custom-img" alt="Disco" src="PON_AQUI_TU_IMAGEN.png" />
+    <div class="player-info">
+      <span class="media-title">Tu video especial</span>
+    </div>
+    <button class="play-btn" id="playBtn">▶</button>
   </div>
 
-  <!-- IPFS + Libp2p -->
-  <script src="https://cdn.jsdelivr.net/npm/kubo-rpc-client@3.0.1/dist/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/libp2p@0.46.0/dist/index.min.js"></script>
-  <script src="app.js"></script>
+  <div class="envlope-wrapper">
+    <div id="envelope" class="close">
+      <div class="flap"></div>
+      <div class="pocket"></div>
+
+      <div class="letter" id="letter">
+        <div class="letter-base">
+          <div class="video-container">
+            <video id="videoDisplay" loop playsinline preload="metadata">
+              <source src="https://qu.ax/su2AD.mp4" type="video/mp4">
+              Tu navegador no soporta el video.
+            </video>
+          </div>
+        </div>
+
+        <!-- ✅ ESCRIBE TODO TU TEXTO AQUÍ -->
+        <div id="full-text" style="display:none">
+Aquí puedes escribir todo lo que quieras. ✨
+
+Gracias por estar en mi vida, por tu sonrisa que ilumina mis días. 💖
+
+Te quiero mucho. Con todo mi amor ❤️
+— Tu persona que te ama 💌
+        </div>
+
+        <div id="folds-container"></div>
+      </div>
+
+      <div class="hearts">
+        <div class="heart a1"></div>
+        <div class="heart a2"></div>
+        <div class="heart a3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instruccion" id="instruccion">👉 Toca la carta para abrir y reproducir ✨</div>
+
+  <script>
+    // 📌 CONFIGURACIÓN
+    const ALTURA_PLIEGUE = 145; // ✅ MISMA altura que el encabezado
+    const LINEAS_POR_PLIEGUE = 2;
+    const ALTURA_INICIAL = ALTURA_PLIEGUE + 20; // Espacio después del encabezado
+    const ESPACIO_ENTRE_PLIEGUES = ALTURA_PLIEGUE; // Cada pliegue justo debajo del anterior
+    const RETRASO_ENTRE_PLIEGUES = 0.6;
+
+    function generarPliegues() {
+      const textoCompleto = document.getElementById('full-text').textContent.trim();
+      const contenedor = document.getElementById('folds-container');
+      
+      const parrafos = textoCompleto.split('\n').filter(p => p.trim() !== '');
+      
+      const bloques = [];
+      let bloqueActual = [];
+      let contadorLineas = 0;
+      
+      parrafos.forEach(parrafo => {
+        const lineasParrafo = parrafo.trim() ? [parrafo.trim()] : [];
+        lineasParrafo.forEach(linea => {
+          if (contadorLineas >= LINEAS_POR_PLIEGUE) {
+            bloques.push(bloqueActual);
+            bloqueActual = [];
+            contadorLineas = 0;
+          }
+          bloqueActual.push(linea);
+          contadorLineas++;
+        });
+      });
+      
+      if (bloqueActual.length > 0) {
+        bloques.push(bloqueActual);
+      }
+      
+      bloques.forEach((texto, indice) => {
+        const top = ALTURA_INICIAL + (indice * ESPACIO_ENTRE_PLIEGUES);
+        const retraso = 0.4 + (indice * RETRASO_ENTRE_PLIEGUES);
+        
+        const esUltimo = indice === bloques.length - 1;
+        
+        const linea = document.createElement('div');
+        linea.className = 'fold-line';
+        
+        const pliegue = document.createElement('div');
+        pliegue.className = 'fold';
+        pliegue.style.top = top + 'px';
+        pliegue.style.transitionDelay = retraso + 's';
+        
+        pliegue.innerHTML = `
+          <div class="fold-content" style="${esUltimo ? 'border-radius:0 0 6px 6px;box-shadow:0 2px 4px rgba(0,0,0,0.06);' : ''}">
+            ${texto.join('<br>')}
+          </div>
+        `;
+        
+        contenedor.appendChild(linea);
+        contenedor.appendChild(pliegue);
+      });
+      
+      const totalPliegues = bloques.length;
+      const nuevaAltura = 1000 + (totalPliegues * ALTURA_PLIEGUE);
+      document.querySelector('.envlope-wrapper').style.height = Math.max(1250, nuevaAltura) + 'px';
+    }
+
+    generarPliegues();
+
+    // === RESTO DEL CÓDIGO ===
+    const envelope = document.getElementById('envelope');
+    const instruccion = document.getElementById('instruccion');
+    const videoDisplay = document.getElementById('videoDisplay');
+    const playBtn = document.getElementById('playBtn');
+
+    let isPlaying = false;
+    let isOpen = false;
+
+    function toggleVideo() {
+      if (isPlaying) {
+        videoDisplay.pause();
+        playBtn.textContent = '▶';
+      } else {
+        videoDisplay.play().catch(e => console.log('Reproducción:', e));
+        playBtn.textContent = '⏸';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    envelope.addEventListener('click', function () {
+      if (!isOpen) {
+        envelope.classList.remove('close');
+        envelope.classList.add('open');
+        instruccion.style.opacity = '0';
+        if (!isPlaying) toggleVideo();
+      } else {
+        envelope.classList.remove('open');
+        envelope.classList.add('close');
+        instruccion.style.opacity = '0.8';
+        if (isPlaying) toggleVideo();
+      }
+      isOpen = !isOpen;
+    });
+
+    playBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleVideo();
+    });
+  </script>
 </body>
 </html>
